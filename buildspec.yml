@@ -63,6 +63,7 @@ phases:
       - cp k8s/backend-service.yaml k8s-out/service.yaml
 
       - cp k8s/ingress.yaml k8s-out/ingress.yaml
+      - cp k8s/namespace.yaml k8s-out/namespace.yaml
  
 artifacts:
 
@@ -75,4 +76,5 @@ artifacts:
     - service.yaml
 
     - ingress.yaml
+    - namespace.yaml
  

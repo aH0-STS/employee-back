@@ -6,7 +6,7 @@ env:
 
     AWS_REGION: "us-east-1"
 
-    ECR_REPO: "522814735019.dkr.ecr.us-east-1.amazonaws.com/employeeback:latest"
+    ECR_REPO: "522814735019.dkr.ecr.us-east-1.amazonaws.com/employeeback"
 
     IMAGE_TAG: "latest"
  

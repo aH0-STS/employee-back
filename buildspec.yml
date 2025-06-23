@@ -13,6 +13,8 @@ phases:
     commands:
       - echo Installing Maven...
       - yum install -y maven
+      - echo Installing Trivy for image scanning...
+      - rpm -ivh https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.50.1_Linux-64bit.rpm || true
 
   pre_build:
     commands:
@@ -21,14 +23,15 @@ phases:
 
   build:
     commands:
-      - echo Running SonarQube analysis...
+      - echo Running SonarQube analysis and building project...
       - mvn clean verify sonar:sonar -Dsonar.projectKey=employeeyash -Dsonar.host.url=http://18.214.25.48 -Dsonar.login=sqp_d113cb3434eb018a3e43d768747ead82009b3567
-
-      - echo Building the backend project...
-      - mvn package
-
       - echo Building Docker image...
       - docker build -t $ECR_REPO:$IMAGE_TAG .
+      - echo Scanning Docker image with Trivy...
+      - trivy image --exit-code 1 --severity HIGH,CRITICAL $ECR_REPO:$IMAGE_TAG || {
+            echo "Vulnerabilities found! Failing the build.";
+            exit 1;
+        }
 
   post_build:
     commands:

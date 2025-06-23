@@ -14,7 +14,7 @@ phases:
       - echo Installing Maven...
       - yum install -y maven
       - echo Installing Trivy for image scanning...
-      - rpm -ivh https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.50.1_Linux-64bit.rpm || true
+      - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
 
   pre_build:
     commands:

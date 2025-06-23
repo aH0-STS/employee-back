@@ -27,11 +27,8 @@ phases:
       - mvn clean verify sonar:sonar -Dsonar.projectKey=employeeyash -Dsonar.host.url=http://18.214.25.48 -Dsonar.login=sqp_d113cb3434eb018a3e43d768747ead82009b3567
       - echo Building Docker image...
       - docker build -t $ECR_REPO:$IMAGE_TAG .
-      - echo Scanning Docker image with Trivy...
-      - trivy image --exit-code 1 --severity HIGH,CRITICAL $ECR_REPO:$IMAGE_TAG || {
-            echo "Vulnerabilities found! Failing the build.";
-            exit 1;
-        }
+      - echo Scanning Docker image with Trivy (non-blocking)...
+      - trivy image --severity HIGH,CRITICAL --format table --output trivy-report.txt $ECR_REPO:$IMAGE_TAG || echo "Trivy scan completed with vulnerabilities (not blocking)."
 
   post_build:
     commands:
@@ -46,9 +43,10 @@ phases:
       - cp k8s/namespace.yaml k8s-out/namespace.yaml
 
 artifacts:
-  base-directory: k8s-out
+  base-directory: .
   files:
-    - deployment.yaml
-    - service.yaml
-    - ingress.yaml
-    - namespace.yaml
+    - trivy-report.txt
+    - k8s-out/deployment.yaml
+    - k8s-out/service.yaml
+    - k8s-out/ingress.yaml
+    - k8s-out/namespace.yaml

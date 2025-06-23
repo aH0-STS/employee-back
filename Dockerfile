@@ -1,4 +1,4 @@
-FROM 522814735019.dkr.ecr.us-east-1.amazonaws.com/base-images:openjdk-17-slim 
+FROM public.ecr.aws/amazoncorretto/amazoncorretto:17-alpine3.18
 WORKDIR /app
 COPY target/*.jar app.jar
 EXPOSE 8080

@@ -13,6 +13,12 @@ phases:
     commands:
       - echo Installing Maven...
       - yum install -y maven
+      - echo Installing Docker...
+      - yum install -y docker
+      - service docker start
+      - echo Installing Trivy...
+      - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+      - echo "Trivy installed successfully."
 
   pre_build:
     commands:
@@ -29,6 +35,8 @@ phases:
 
       - echo Building Docker image...
       - docker build -t $ECR_REPO:$IMAGE_TAG .
+      - mkdir -p trivy-reports
+      - trivy image --severity HIGH,CRITICAL --exit-code 0 --format table -o trivy-reports/report.txt $ECR_REPO:$IMAGE_TAG || true
 
   post_build:
     commands:
@@ -49,4 +57,3 @@ artifacts:
     - service.yaml
     - ingress.yaml
     - namespace.yaml
-
